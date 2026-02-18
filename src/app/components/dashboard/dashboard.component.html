@@ -1,0 +1,259 @@
+<div class="dashboard-container">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <span class="material-icons-outlined header-icon">monitoring</span>
+      <div>
+        <h1 class="header-title">Billing Monitor</h1>
+        <p class="header-subtitle">Edenred SmartInvoicing</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="status-indicator" [class.active]="!loading && !error">
+        <span class="status-dot"></span>
+        <span class="status-text">{{ loading ? 'Cargando...' : error ? 'Error' : isLiveMode ? 'En linea' : 'Consulta por fecha' }}</span>
+      </div>
+      <div class="countdown-badge" *ngIf="!loading && isLiveMode">
+        <span class="material-icons-outlined">schedule</span>
+        <span>{{ countdown }}s</span>
+      </div>
+      <div class="last-updated" *ngIf="lastUpdated">
+        Actualizado: {{ lastUpdated | date:'HH:mm:ss' }}
+      </div>
+    </div>
+  </header>
+
+  <!-- Date Filter -->
+  <div class="card filter-card">
+    <div class="filter-row">
+      <div class="filter-group">
+        <label for="fechaBusqueda" class="filter-label">Buscar por fecha</label>
+        <input
+          id="fechaBusqueda"
+          type="date"
+          class="date-input"
+          [value]="selectedDate"
+          [max]="maxSelectableDate"
+          (change)="selectedDate = $any($event.target).value"
+        />
+      </div>
+
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="searchByDate()"
+        [disabled]="loading || !selectedDate"
+      >
+        Buscar
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="clearDateFilter()"
+        [disabled]="isLiveMode"
+      >
+        Volver a monitoreo en vivo
+      </button>
+
+      <span class="mode-badge" [class.mode-live]="isLiveMode" [class.mode-date]="!isLiveMode">
+        {{ isLiveMode ? 'Modo en vivo' : 'Modo fecha' }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Cargando datos del monitor...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-banner" *ngIf="error && !loading">
+    <span class="material-icons-outlined">error_outline</span>
+    <span>{{ error }}</span>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div class="dashboard-content" *ngIf="dashboard && !loading">
+
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-icon-wrapper kpi-total">
+          <span class="material-icons-outlined">receipt_long</span>
+        </div>
+        <div class="kpi-info">
+          <span class="kpi-label">Total Procesadas</span>
+          <span class="kpi-value">{{ dashboard.totalProcessed | number }}</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon-wrapper kpi-success">
+          <span class="material-icons-outlined">check_circle</span>
+        </div>
+        <div class="kpi-info">
+          <span class="kpi-label">Exitosas</span>
+          <span class="kpi-value kpi-value-success">{{ dashboard.successCount | number }}</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon-wrapper kpi-error">
+          <span class="material-icons-outlined">cancel</span>
+        </div>
+        <div class="kpi-info">
+          <span class="kpi-label">Con Error</span>
+          <span class="kpi-value kpi-value-error">{{ dashboard.errorCount | number }}</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon-wrapper kpi-rate">
+          <span class="material-icons-outlined">speed</span>
+        </div>
+        <div class="kpi-info">
+          <span class="kpi-label">Tasa de Exito</span>
+          <span class="kpi-value">{{ dashboard.successRate | number:'1.1-1' }}%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="charts-row">
+      <!-- Donut Chart -->
+      <div class="card donut-card">
+        <h3 class="card-title">Distribucion</h3>
+        <div class="donut-container">
+          <svg viewBox="0 0 120 120" class="donut-chart">
+            <circle cx="60" cy="60" r="50" fill="none" stroke="#e5e7eb" stroke-width="12" />
+            <circle cx="60" cy="60" r="50" fill="none"
+              stroke="var(--color-success)" stroke-width="12"
+              [attr.stroke-dasharray]="(getSuccessPercentage() / 100 * 314.16) + ' ' + 314.16"
+              stroke-dashoffset="0"
+              stroke-linecap="round"
+              transform="rotate(-90 60 60)" />
+            <circle cx="60" cy="60" r="50" fill="none"
+              stroke="var(--color-error)" stroke-width="12"
+              [attr.stroke-dasharray]="(getErrorPercentage() / 100 * 314.16) + ' ' + 314.16"
+              [attr.stroke-dashoffset]="-(getSuccessPercentage() / 100 * 314.16)"
+              stroke-linecap="round"
+              transform="rotate(-90 60 60)" />
+          </svg>
+          <div class="donut-center">
+            <span class="donut-center-value">{{ dashboard.totalProcessed }}</span>
+            <span class="donut-center-label">Total</span>
+          </div>
+        </div>
+        <div class="donut-legend">
+          <div class="legend-item">
+            <span class="legend-dot legend-success"></span>
+            <span>Exitosas ({{ dashboard.successCount }})</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot legend-error"></span>
+            <span>Errores ({{ dashboard.errorCount }})</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bar Chart (Series Stats) -->
+      <div class="card bar-card">
+        <h3 class="card-title">Facturas por serie</h3>
+        <div class="bar-chart-container" *ngIf="dashboard.seriesStats.length > 0">
+          <div class="bar-chart">
+            <div class="bar-group" *ngFor="let point of dashboard.seriesStats">
+              <div class="bar-pair">
+                <div class="bar bar-success"
+                  [style.height.%]="getSeriesBarHeight(point, 'success')"
+                  [title]="'Exitosas: ' + point.success">
+                </div>
+                <div class="bar bar-error"
+                  [style.height.%]="getSeriesBarHeight(point, 'error')"
+                  [title]="'Errores: ' + point.error">
+                </div>
+              </div>
+              <span class="bar-label" [title]="point.serie">{{ point.serie }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="empty-chart" *ngIf="dashboard.seriesStats.length === 0">
+          <span class="material-icons-outlined">bar_chart</span>
+          <p>{{ isLiveMode ? 'Sin datos de series en la ultima hora' : 'Sin datos de series para la fecha seleccionada' }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Processing Time -->
+    <div class="card info-card">
+      <div class="info-row">
+        <div class="info-item">
+          <span class="material-icons-outlined">timer</span>
+          <div>
+            <span class="info-label">Tiempo promedio de proceso</span>
+            <span class="info-value">{{ dashboard.averageProcessingTimeMs | number:'1.0-0' }} ms</span>
+          </div>
+        </div>
+        <div class="info-item">
+          <span class="material-icons-outlined">date_range</span>
+          <div>
+            <span class="info-label">Ventana de consulta</span>
+            <span class="info-value">{{ formatDateTime(dashboard.queryFrom) }} - {{ formatDateTime(dashboard.queryTo) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error Table -->
+    <div class="card table-card" *ngIf="dashboard.recentErrors.length > 0">
+      <h3 class="card-title">
+        <span class="material-icons-outlined" style="color: var(--color-error); vertical-align: middle;">warning</span>
+        Errores recientes ({{ dashboard.recentErrors.length }})
+      </h3>
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Serie</th>
+              <th>Folio</th>
+              <th>RFC Receptor</th>
+              <th>XML</th>
+              <th>PDF</th>
+              <th>Tiempo (ms)</th>
+              <th>Mensaje</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let err of dashboard.recentErrors">
+              <td>{{ formatDateTime(err.fecha) }}</td>
+              <td>{{ err.serie || '-' }}</td>
+              <td>{{ err.folio || '-' }}</td>
+              <td class="rfc-cell">{{ err.rfcReceptor || '-' }}</td>
+              <td>
+                <span class="badge" [class.badge-success]="err.xmlGenerado" [class.badge-error]="!err.xmlGenerado">
+                  {{ err.xmlGenerado ? 'Si' : 'No' }}
+                </span>
+              </td>
+              <td>
+                <span class="badge" [class.badge-success]="err.pdfGenerado" [class.badge-error]="!err.pdfGenerado">
+                  {{ err.pdfGenerado ? 'Si' : 'No' }}
+                </span>
+              </td>
+              <td>{{ err.tiempoProceso || '-' }}</td>
+              <td class="message-cell" [title]="err.mensaje || ''">{{ truncateMessage(err.mensaje) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- No Errors -->
+    <div class="card no-errors" *ngIf="dashboard.recentErrors.length === 0 && dashboard.totalProcessed > 0">
+      <span class="material-icons-outlined" style="font-size: 48px; color: var(--color-success);">verified</span>
+      <p>{{ isLiveMode ? 'No se encontraron errores en la ultima hora' : 'No se encontraron errores para la fecha seleccionada' }}</p>
+    </div>
+
+  </div>
+</div>
