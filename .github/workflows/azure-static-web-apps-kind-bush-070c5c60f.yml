@@ -42,7 +42,7 @@ jobs:
                   # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
                   app_location: "/" # App source code path
                   api_location: "" # Api source code path - optional
-                  output_location: "/bin/staticsites/f5bd869b-09e0-4e66-8a94-d4b1ec7ce2f6-swa-oryx/app/billing-monitor-client/browser" # Built app content directory - optional
+                  output_location: "/" # Built app content directory - optional
                   github_id_token: ${{ steps.idtoken.outputs.result }}
                   ###### End of Repository/Build Configurations ######
 
