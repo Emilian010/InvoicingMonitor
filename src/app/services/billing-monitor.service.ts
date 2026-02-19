@@ -17,8 +17,9 @@ export class BillingMonitorService {
     const hed = {
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, PUT, DELETE, PATCH'
+        'Access-Control-Allow-Origin': 'https://emx-xmlengine-fa-q.azurewebsites.net',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, PUT, DELETE, PATCH',
+        'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept'
       }
     };
     return this.http.get<BillingDashboard>(`${this.apiUrl}/BillingMonitor/dashboard`, hed);
