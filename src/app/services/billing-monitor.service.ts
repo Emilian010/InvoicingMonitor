@@ -14,7 +14,14 @@ export class BillingMonitorService {
   constructor(private http: HttpClient) { }
 
   getDashboard(): Observable<BillingDashboard> {
-    return this.http.get<BillingDashboard>(`${this.apiUrl}/BillingMonitor/dashboard`);
+    const hed = {
+      headers: {
+        'Access-Control-Allow-Origin': "*",
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+      }
+    };
+    return this.http.get<BillingDashboard>(`${this.apiUrl}/BillingMonitor/dashboard`, hed);
   }
 
   getDashboardByDate(fecha: string): Observable<BillingDashboard> {
