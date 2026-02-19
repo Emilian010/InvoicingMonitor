@@ -14,17 +14,7 @@ export class BillingMonitorService {
   constructor(private http: HttpClient) { }
 
   getDashboard(): Observable<BillingDashboard> {
-
-
-    const hed = {
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': 'emx-xmlengine-fa-q.azurewebsites.net, kind-bush-070c5c60f.1.azurestaticapps.net',
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, PUT, DELETE, PATCH',
-        'Access-Control-Allow-Headers': 'X-Requested-With,content-type,Authorization'
-      }
-    };
-    return this.http.get<BillingDashboard>(`${this.apiUrl}/BillingMonitor/dashboard`, hed);
+    return this.http.get<BillingDashboard>(`${this.apiUrl}/BillingMonitor/dashboard`);
   }
 
   getDashboardByDate(fecha: string): Observable<BillingDashboard> {
