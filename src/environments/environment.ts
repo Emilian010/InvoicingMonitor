@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:7054/api',
+  apiUrl: 'https://emx-xmlengine-fa-q.azurewebsites.net/api',
 };
