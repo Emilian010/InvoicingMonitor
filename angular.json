@@ -26,10 +26,6 @@
             ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              },
               "staticwebapp.config.json"
             ],
             "styles": [
