@@ -14,10 +14,12 @@ export class BillingMonitorService {
   constructor(private http: HttpClient) { }
 
   getDashboard(): Observable<BillingDashboard> {
+
+
     const hed = {
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': 'https://emx-xmlengine-fa-q.azurewebsites.net',
+        'Access-Control-Allow-Origin': 'https://emx-xmlengine-fa-q.azurewebsites.net, https://kind-bush-070c5c60f.1.azurestaticapps.net',
         'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, PUT, DELETE, PATCH',
         'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept'
       }
