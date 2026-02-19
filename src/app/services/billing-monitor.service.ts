@@ -16,9 +16,9 @@ export class BillingMonitorService {
   getDashboard(): Observable<BillingDashboard> {
     const hed = {
       headers: {
-        'Access-Control-Allow-Origin': "*",
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, PUT, DELETE, PATCH'
       }
     };
     return this.http.get<BillingDashboard>(`${this.apiUrl}/BillingMonitor/dashboard`, hed);
