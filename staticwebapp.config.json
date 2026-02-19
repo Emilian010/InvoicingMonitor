@@ -1,8 +1,6 @@
 {
     "globalHeaders": {
-        "Access-Control-Allow-Origin": [
-            "https://emx-xmlengine-fa-q.azurewebsites.net"
-        ],
+        "Access-Control-Allow-Origin": "https://emx-xmlengine-fa-q.azurewebsites.net",
         "Access-Control-Allow-Methods": "GET, POST, PUT"
     }
 }
