@@ -11,14 +11,14 @@ export class BillingMonitorService {
   private readonly apiUrl = environment.apiUrl;
   private readonly POLLING_INTERVAL_MS = 120_000; // 2 minutes
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getDashboard(): Observable<BillingDashboard> {
-    return this.http.get<BillingDashboard>(`${this.apiUrl}/BillingMonitor/dashboard`);
+    return this.http.get<BillingDashboard>('api/BillingMonitor/dashboard');
   }
 
   getDashboardByDate(fecha: string): Observable<BillingDashboard> {
-    return this.http.get<BillingDashboard>(`${this.apiUrl}/BillingMonitor/dashboard/by-date`, {
+    return this.http.get<BillingDashboard>(`api/BillingMonitor/dashboard/by-date`, {
       params: { fecha },
     });
   }
