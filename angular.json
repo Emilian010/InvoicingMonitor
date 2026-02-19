@@ -26,7 +26,10 @@
             ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
-              "src/staticwebapp.config.json"
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
             ],
             "styles": [
               "src/styles.css"
@@ -54,9 +57,6 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
-          "options": {
-            "proxyConfig": "proxy.config.json"
-          },
           "configurations": {
             "production": {
               "buildTarget": "billing-monitor-client:build:production"
@@ -66,14 +66,8 @@
             }
           },
           "defaultConfiguration": "development"
-        },
-        "deploy": {
-          "builder": "angular-cli-ghpages:deploy"
         }
       }
     }
-  },
-  "cli": {
-    "analytics": "f00ff2e8-46ff-438f-8893-6dda21df2681"
   }
 }
