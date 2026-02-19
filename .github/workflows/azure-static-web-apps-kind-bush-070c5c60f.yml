@@ -24,6 +24,8 @@ jobs:
                   lfs: false
             - name: Install OIDC Client from Core Package
               run: npm install @actions/core@1.6.0 @actions/http-client
+            - name: Copy staticwebapp.config.json to build folder
+              run: cp "staticwebapp.config.json" "dist/billing-monitor-client/staticwebapp.config.json"
             - name: Get Id Token
               uses: actions/github-script@v6
               id: idtoken
